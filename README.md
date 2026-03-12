@@ -9,7 +9,11 @@
 
 <img width="2159" height="1440" alt="Screenshot 2026-03-12 145629" src="https://github.com/user-attachments/assets/ec29a066-b425-42bd-b585-8a11d1dea284" />
 
----
+**File terkait:**
+- File Blade / HTML section: [resources/views/welcome.blade.php](resources/views/welcome.blade.php)
+- File CSS terkait: [public/css/top-products.css](public/css/top-products.css)
+
+
 
 ## Task 2 — Optimasi Query Listing Produk
 
