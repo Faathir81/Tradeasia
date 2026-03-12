@@ -61,3 +61,18 @@ $products = DB::table('product_lang')
 ## Task 3 — Modal Inquire Now + Passing product_id
 
 <img width="2159" height="1440" alt="task 3" src="https://github.com/user-attachments/assets/1ac657aa-c16d-4059-afc3-595ca0eb6960" />
+
+---
+
+# Task 4 — Rekomendasi Optimasi Website
+
+Berdasarkan hasil analisis asset statis dan PageSpeed Insights, performa website masih dapat ditingkatkan terutama pada perangkat mobile. Hal ini kemungkinan disebabkan oleh jumlah gambar yang cukup banyak, ukuran asset yang cukup besar, serta adanya JavaScript yang mempengaruhi proses rendering halaman.
+
+### Prioritas Tinggi
+Melakukan optimasi gambar (kompresi atau format WebP) serta menerapkan lazy loading agar tidak semua gambar dimuat saat halaman pertama kali dibuka.
+
+### Prioritas Menengah
+Mengurangi render blocking JavaScript dengan menggunakan atribut `defer` atau `async`, serta melakukan minify pada file CSS dan JavaScript.
+
+### Prioritas Rendah
+Mengimplementasikan caching pada server atau menggunakan CDN untuk meningkatkan kecepatan distribusi asset statis.
