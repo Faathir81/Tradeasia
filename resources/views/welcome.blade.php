@@ -65,7 +65,11 @@
                                         <div class="product-card-name">{{ $lang->productname }}</div>
                                         <div class="product-card-meta">CAS Number : <span>{{ $lang->cas_number ?? '-' }}</span></div>
                                         <div class="product-card-meta">HS Code : <span>{{ $lang->hs_code ?? '-' }}</span></div>
-                                        <a href="#" class="product-card-btn">Inquire Now</a>
+                                        <button
+                                            class="product-card-btn inquire-now-btn"
+                                            data-product-id="{{ $product->id }}"
+                                            data-product-name="{{ $lang->productname }}"
+                                        >Inquire Now</button>
                                     </div>
                                 </div>
                             @endif
@@ -144,6 +148,97 @@
             });
 
             buildDots();
+        })();
+        </script>
+
+        <!-- ===== INQUIRE NOW MODAL ===== -->
+        <div id="inquireModal" class="inquire-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="inquireModalTitle">
+            <div class="inquire-modal-box">
+                <!-- Close Button -->
+                <button class="inquire-modal-close" id="inquireModalClose" aria-label="Close">&times;</button>
+
+                <!-- Hidden: product_id dikirim via JavaScript -->
+                <input type="hidden" id="inquireProductId" name="product_id" value="">
+
+                <!-- Header -->
+                <h3 class="inquire-modal-title" id="inquireModalTitle">Welcome back!</h3>
+                <p class="inquire-modal-subtitle">Log in to start sending quotation requests for any product.</p>
+
+                <!-- OAuth Buttons -->
+                <div class="inquire-oauth-list">
+                    <button class="inquire-oauth-btn" type="button">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
+                        Sign in with Google
+                    </button>
+                    <button class="inquire-oauth-btn" type="button">
+                        <img src="https://www.svgrepo.com/show/448234/microsoft.svg" alt="Microsoft">
+                        Sign in with Microsoft
+                    </button>
+                    <button class="inquire-oauth-btn" type="button">
+                        <img src="https://www.svgrepo.com/show/452092/apple.svg" alt="Apple">
+                        Sign in with Apple
+                    </button>
+                    <button class="inquire-oauth-btn" type="button">
+                        <img src="https://www.svgrepo.com/show/448234/linkedin.svg" alt="LinkedIn" style="filter: invert(22%) sepia(99%) saturate(1150%) hue-rotate(189deg) brightness(95%) contrast(103%);">
+                        Sign in with LinkedIn
+                    </button>
+                    <button class="inquire-oauth-btn" type="button">
+                        <img src="https://www.svgrepo.com/show/448224/facebook.svg" alt="Facebook">
+                        Sign in with Facebook
+                    </button>
+                </div>
+
+                <!-- Sign Up Link -->
+                <p class="inquire-modal-signup">
+                    Don't have an account? <a href="#" class="inquire-signup-link">Sign Up Here</a>
+                </p>
+            </div>
+        </div>
+        <!-- ===== END INQUIRE NOW MODAL ===== -->
+
+        <!-- Modal Script -->
+        <script>
+        (function () {
+            const modal        = document.getElementById('inquireModal');
+            const closeBtn     = document.getElementById('inquireModalClose');
+            const productIdInput = document.getElementById('inquireProductId');
+
+            // Buka modal saat tombol "Inquire Now" diklik
+            document.querySelectorAll('.inquire-now-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const productId   = this.getAttribute('data-product-id');
+                    const productName = this.getAttribute('data-product-name');
+
+                    // Passing product_id ke hidden input di dalam modal
+                    productIdInput.value = productId;
+
+                    // Log untuk verifikasi (bisa dihapus di production)
+                    console.log('Inquire Now clicked — product_id:', productId, '| product_name:', productName);
+
+                    // Tampilkan modal
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            // Tutup modal saat klik tombol X
+            closeBtn.addEventListener('click', closeModal);
+
+            // Tutup modal saat klik overlay (area di luar modal box)
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) closeModal();
+            });
+
+            // Tutup modal saat tekan Escape
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closeModal();
+            });
+
+            function closeModal() {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+                productIdInput.value = '';
+            }
         })();
         </script>
     </body>
