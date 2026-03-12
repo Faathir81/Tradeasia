@@ -76,3 +76,15 @@ Mengurangi render blocking JavaScript dengan menggunakan atribut `defer` atau `a
 
 ### Prioritas Rendah
 Mengimplementasikan caching pada server atau menggunakan CDN untuk meningkatkan kecepatan distribusi asset statis.
+
+# Task 5 — Halaman Tanpa Metadata
+
+## Risiko SEO jika metadata tidak tersedia
+
+Jika halaman tidak memiliki metadata seperti meta title atau meta description, mesin pencari seperti Google akan lebih sulit memahami isi halaman tersebut. Hal ini bisa membuat halaman kurang optimal di hasil pencarian dan berpotensi menurunkan ranking. Selain itu, tampilan hasil pencarian juga bisa menjadi kurang jelas karena Google harus membuat deskripsi otomatis dari isi halaman.
+
+--- 
+
+## Rekomendasi fallback metadata
+
+Sejujurnya saya belum pernah menangani kasus metadata fallback secara langsung. Tapi dari yang saya pahami, metadata penting untuk SEO karena membantu search engine memahami isi halaman. Jika metadata tidak tersedia, biasanya bisa dibuat fallback seperti menggunakan title halaman atau deskripsi default dari template.
