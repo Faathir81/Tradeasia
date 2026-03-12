@@ -1,59 +1,100 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Tradeasia Technical Test
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Technical test untuk posisi magang di Tradeasia. Project ini dibuat menggunakan Laravel 12.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Cara Install
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```bash
+git clone https://github.com/Faathir81/Tradeasia.git
+cd Tradeasia
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+composer install
 
-## Learning Laravel
+cp .env.example .env
+php artisan key:generate
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Sesuaikan konfigurasi database di file `.env`:
+```
+DB_DATABASE=tradeasia_database
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Lalu jalankan:
+```bash
+php artisan migrate
+php artisan serve
+```
 
-## Laravel Sponsors
+Buka di browser: `http://127.0.0.1:8000`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## Task 1 — Section "Our Top Products"
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Bikin section carousel produk di halaman utama yang datanya diambil dari tabel `product` dan `product_lang`.
 
-## Contributing
+**Yang ada di section ini:**
+- Judul "Our Top Products"
+- 4 card produk per baris di desktop (2 di tablet, 1 di mobile)
+- Setiap card ada: foto produk, nama produk, CAS Number, HS Code, tombol "Inquire Now"
+- Tombol panah kiri/kanan untuk geser carousel
+- Dots indicator di bawah
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**Pendekatan yang dipake:**
 
-## Code of Conduct
+Data produk disimpan di 2 tabel yang direlasikan:
+- `product` → nyimpan foto dan status produk
+- `product_lang` → nyimpan nama, CAS Number, HS Code per bahasa. Kita ambil yang `language_id = 1` (Inggris)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Di controller (`HomeController.php`), data diambil pake eager loading biar tidak N+1 query:
+```php
+$products = Product::with(['englishLang'])
+    ->where('publish', 1)
+    ->whereNull('deleted_at')
+    ->get();
+```
 
-## Security Vulnerabilities
+Carousel-nya dibuat manual pake CSS `translateX` dan vanilla JS, bukan pake library. Foto produk prefix URLnya dari `https://cdn.chemtradeasia.com`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**File yang dibuat/diubah:**
+- `app/Models/Product.php`
+- `app/Models/ProductLang.php`
+- `app/Http/Controllers/HomeController.php`
+- `routes/web.php`
+- `resources/views/welcome.blade.php`
+- `public/css/top-products.css`
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Task 3 — Modal Inquire Now + Passing product_id
+
+Saat tombol "Inquire Now" di card produk diklik, muncul modal login yang isinya pilihan sign in (Google, Microsoft, Apple, LinkedIn, Facebook).
+
+**Yang penting di task ini:** `product_id` dari produk yang diklik harus ikut "terkirim" ke dalam modal, tanpa bikin route baru dan tanpa page refresh.
+
+**Cara kerjanya:**
+
+Tiap tombol "Inquire Now" nyimpen `product_id` di atribut `data-product-id`:
+```html
+<button class="inquire-now-btn" data-product-id="{{ $product->id }}">
+    Inquire Now
+</button>
+```
+
+Pas diklik, JavaScript baca nilai itu terus set ke hidden input di dalam modal:
+```js
+const productId = this.getAttribute('data-product-id');
+document.getElementById('inquireProductId').value = productId;
+```
+
+Modal muncul/hilang cukup pake toggle CSS class, jadi tidak ada redirect atau reload sama sekali.
+
+Modal bisa ditutup dengan: klik tombol ×, klik area di luar modal, atau tekan Escape.
+
+**File yang diubah:**
+- `resources/views/welcome.blade.php` — tambahin modal HTML + JS
+- `public/css/top-products.css` — tambahin style modal
